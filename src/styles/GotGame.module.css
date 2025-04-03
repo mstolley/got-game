@@ -35,7 +35,7 @@
     width: 240px;
     padding: 10px;
     text-align: left;
-    background-color: #f0f0f0 !important;
+    background-color: #ededed !important;
     opacity: 0;
     animation: fadeIn .25s forwards;
     border-radius: 10px;
@@ -119,14 +119,12 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-    border: 1px solid #999;
     border-radius: 20px;
     background-color: #ccc;
 }
 
 @media (prefers-color-scheme: dark) {
     .scoreContainer {
-        border-color: #ededed;
         background-color: #666;
     }
 }
