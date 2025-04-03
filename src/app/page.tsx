@@ -19,6 +19,7 @@ const GotGame = () => {
     const [question, setQuestion] = useState<string | null>(null);
     const [wins, setWins] = useState<Character[] | null>(null);
     const [isLoss, setIsLoss] = useState(false);
+    const [isEnd, setIsEnd] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
 
@@ -62,11 +63,14 @@ const GotGame = () => {
 
             const shuffledSelectedCharacters = shuffleArray(selectedCharacters);
 
-            if (!cleanCharacters) alert('BADASS');
-
-            setGameCharacters(shuffledSelectedCharacters);
-            setWinner(winner || null);
-            setQuestion(question);
+            if (cleanCharacters) {
+                setGameCharacters(shuffledSelectedCharacters);
+                setWinner(winner || null);
+                setQuestion(question);
+            } else {
+                alert('BADASS');
+                setIsEnd(true);
+            }
         } else {
             setError(new Error('Not enough characters to start the game.'));
         }
@@ -157,15 +161,23 @@ const GotGame = () => {
                     )}
                     {isLoss && (
                         <>
-                            <div className={styles.lostContainer}>
-                                <h5 className={styles.lostText}>You lost!</h5>
-                            </div>
+                            {isEnd ? (
+                                <div className={styles.lostContainer}>
+                                    <h5 className="text-2xl">You reached the end of your quest!</h5>
+                                </div>
+
+                            ) : (
+                                <div className={styles.lostContainer}>
+                                    <h5 className={styles.lostText}>You lost!</h5>
+                                </div>
+                            )}
+
                             <div className={styles.buttonContainer}>
                                 <button className={styles.button} onClick={resetGame}>Play Again</button>
                             </div>
                         </>
                     )}
-                    {gameCharacters && !isLoss && (
+                    {gameCharacters && !isLoss && !isEnd && (
                         <>
                             {question && (
                                 <div className={styles.question}>
