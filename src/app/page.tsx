@@ -17,12 +17,13 @@ const GotGame = () => {
     const [gameCharacters, setGameCharacters] = useState<Character[] | null>(null);
     const [winner, setWinner] = useState<Character | null>(null);
     const [question, setQuestion] = useState<string | null>(null);
-    const [wins, setWins] = useState(0);
+    const [wins, setWins] = useState<Character[] | null>(null);
     const [isLoss, setIsLoss] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
 
-    const prevWinsRef = useRef<number>(wins); // Initialize with the current wins value
+    const winsLength = wins ? wins.length : 0;
+    const prevWinsRef = useRef<number>(winsLength); // Initialize with the current wins value
 
     const memoizedGetRandomKey = useCallback((getRandomKey), []);
 
@@ -49,7 +50,8 @@ const GotGame = () => {
 
     const launchRound = useCallback(() => {
         if (localCharacters && localCharacters.length >= 4) {
-            const shuffledCharacters = shuffleArray(localCharacters);
+            const cleanCharacters = localCharacters.filter(character => !wins?.includes(character));
+            const shuffledCharacters = shuffleArray(cleanCharacters);
             const selectedCharacters = shuffledCharacters?.slice(0, 4);
             const randomKey = memoizedGetRandomKey(localCharacters[0]);
             const legibleKey = getLegibleKey(randomKey);
@@ -60,6 +62,8 @@ const GotGame = () => {
 
             const shuffledSelectedCharacters = shuffleArray(selectedCharacters);
 
+            if (!cleanCharacters) alert('BADASS');
+
             setGameCharacters(shuffledSelectedCharacters);
             setWinner(winner || null);
             setQuestion(question);
@@ -68,14 +72,14 @@ const GotGame = () => {
         }
 
         setIsLoading(false);
-    }, [localCharacters, memoizedGetRandomKey]);
+    }, [localCharacters, memoizedGetRandomKey, wins]);
 
     const resetGame = useCallback(() => {
         setIsLoss(false);
         setGameCharacters(null);
         setWinner(null);
         setQuestion(null);
-        setWins(0);
+        setWins(null);
 
         launchRound();
     }, [launchRound]);
@@ -95,17 +99,17 @@ const GotGame = () => {
     }, [isCheatMode, winner]);
 
     useEffect(() => {
-        if (prevWinsRef.current !== wins) {
+        if (prevWinsRef.current !== winsLength) {
             launchRound();
         }
 
-        prevWinsRef.current = wins;
-    }, [wins, launchRound]);
+        prevWinsRef.current = winsLength;
+    }, [winsLength, launchRound]);
 
     useEffect(() => {
         if (isLoss) {
-            const isNewHighScore = wins > (localHighScore || 0);
-            const scoreToSet = isNewHighScore ? wins : localHighScore;
+            const isNewHighScore = winsLength > localHighScore;
+            const scoreToSet = isNewHighScore ? winsLength : localHighScore;
 
             if (isNewHighScore) {
                 alert(`New high score: ${scoreToSet}`);
@@ -113,7 +117,7 @@ const GotGame = () => {
             setLocalHighScore(scoreToSet);
             saveToLocalStorage('highScore', scoreToSet);
         }
-    }, [isLoss, wins, localHighScore]);
+    }, [isLoss, winsLength, localHighScore]);
 
     if (error) return <div>Error: {error.message}</div>;
 
@@ -148,7 +152,7 @@ const GotGame = () => {
                     ) : (
                         <Header
                             localHighScore={localHighScore}
-                            wins={wins}
+                            wins={winsLength}
                         />
                     )}
                     {isLoss && (
@@ -172,7 +176,7 @@ const GotGame = () => {
                                 <div className={styles.grid}>
                                     {gameCharacters.map(character => (
                                         <div key={character.id} className={styles.card}>
-                                            <div className={styles.imageContainer} onClick={() => character === winner ? setWins(wins + 1) : setIsLoss(true)}>
+                                            <div className={styles.imageContainer} onClick={() => character === winner ? setWins([...(wins || []), character]) : setIsLoss(true)}>
                                                 <Image
                                                     priority
                                                     src={character.imageUrl}
