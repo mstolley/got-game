@@ -11,7 +11,7 @@ import { getLegibleKey } from '../utils/getLegibleKey';
 
 const GotGame = () => {
     const [isCheatMode, setIsCheatMode] = useState(false);
-    const [localHighScore, setLocalHighScore] = useState<number | null>(loadFromLocalStorage('highScore') || 0);
+    const [localHighScore, setLocalHighScore] = useState<number>(loadFromLocalStorage('highScore') || 0);
     const [localCharacters, setLocalCharacters] = useState<Character[] | null>(loadFromLocalStorage('characters'));
     const [gameCharacters, setGameCharacters] = useState<Character[] | null>(null);
     const [winner, setWinner] = useState<Character | null>(null);
@@ -117,7 +117,6 @@ const GotGame = () => {
 
     return (
         <div className={styles.container}>
-            <Header />
             {isLoading ? (
                 <div className={styles.loader}>Loading...</div>
             ) : (
@@ -145,16 +144,10 @@ const GotGame = () => {
                             </div>
                         </div>
                     ) : (
-                        <div className={styles.scoreContainer}>
-                            <div className={styles.wins}>
-                                <span className={styles.scoreKey}>Wins</span>
-                                <span className={styles.scoreValue}>{wins}</span>
-                            </div>
-                            <div className={styles.high}>
-                                <span className={styles.scoreKey}>High</span>
-                                <span className={styles.scoreValue}>{localHighScore}</span>
-                            </div>
-                        </div>
+                        <Header
+                            localHighScore={localHighScore}
+                            wins={localHighScore}
+                        />
                     )}
                     {isLoss && (
                         <>
@@ -170,7 +163,7 @@ const GotGame = () => {
                         <>
                             {question && (
                                 <div className={styles.question}>
-                                    <h5 className="text-3xl font-bold">{question}</h5>
+                                    <h5 className="text-2xl font-bold">{question}</h5>
                                 </div>
                             )}
                             {gameCharacters && (

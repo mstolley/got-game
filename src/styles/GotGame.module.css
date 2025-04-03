@@ -111,11 +111,6 @@
     background-color: #0056b3;
 }
 
-.header {
-    font-size: 24px;
-    font-weight: bold;
-}
-
 .question {
     font-size: 18px;
     font-weight: normal;
@@ -140,6 +135,7 @@
 
 .win,
 .high {
+    /* display: flex; */
     flex: 0;
     text-align: left;
 }
@@ -149,6 +145,7 @@
 }
 
 .scoreValue {
+    width: 50px;
     font-weight: bold;
     border-radius: 3px;
     padding: 5px;
