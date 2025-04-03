@@ -1,4 +1,5 @@
 "use client"
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { Character } from '../interfaces/Character';
@@ -156,7 +157,7 @@ const GotGame = () => {
                                 <h5 className={styles.lostText}>You lost!</h5>
                             </div>
                             <div className={styles.buttonContainer}>
-                                <button className={styles.button} onClick={resetGame}>Play again</button>
+                                <button className={styles.button} onClick={resetGame}>Play Again</button>
                             </div>
                         </>
                     )}

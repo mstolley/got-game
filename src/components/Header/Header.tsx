@@ -7,7 +7,7 @@ interface HeaderProps {
 
 const Header = ({ localHighScore, wins }: HeaderProps) => {
     return (
-        <header>
+        <header className={styles.header}>
             <div className={styles.scoreContainer}>
                 <div className={styles.wins}>
                     <span className={styles.scoreKey}>Wins</span>
