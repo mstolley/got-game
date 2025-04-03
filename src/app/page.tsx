@@ -54,7 +54,7 @@ const GotGame = () => {
             const randomKey = memoizedGetRandomKey(localCharacters[0]);
             const legibleKey = getLegibleKey(randomKey);
             const winner = selectedCharacters?.find((char: Character) => char[randomKey] !== undefined && char[randomKey] !== null);
-            const question = winner?.[randomKey]?.length > 0
+            const question = winner?.[randomKey]
                 ? `Which character has a ${legibleKey} of ${winner?.[randomKey]}?`
                 : `Which character has no ${legibleKey}?`;
 
@@ -67,7 +67,7 @@ const GotGame = () => {
             setError(new Error('Not enough characters to start the game.'));
         }
 
-        setIsLoading(false);
+        setIsLoading(false);git a
     }, [localCharacters, memoizedGetRandomKey]);
 
     const resetGame = useCallback(() => {
