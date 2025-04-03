@@ -67,7 +67,7 @@ const GotGame = () => {
             setError(new Error('Not enough characters to start the game.'));
         }
 
-        setIsLoading(false);git a
+        setIsLoading(false);
     }, [localCharacters, memoizedGetRandomKey]);
 
     const resetGame = useCallback(() => {
