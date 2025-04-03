@@ -126,8 +126,16 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #999;
     border-radius: 20px;
+    background-color: #ccc;
+}
+
+@media (prefers-color-scheme: dark) {
+    .scoreContainer {
+        border-color: #ededed;
+        background-color: #666;
+    }
 }
 
 .win,
@@ -142,6 +150,14 @@
 
 .scoreValue {
     font-weight: bold;
+    border-radius: 3px;
+    padding: 5px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .scoreValue {
+        background-color: #ededed;
+    }
 }
 
 .wins .scoreValue {
