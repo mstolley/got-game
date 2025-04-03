@@ -1,103 +1,203 @@
-import Image from "next/image";
+"use client"
+import { useCallback, useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
+import { Character } from '../interfaces/Character';
+import { loadFromLocalStorage, saveToLocalStorage } from '../utils/localStorage';
+import { shuffleArray } from '../utils/shuffleArray';
+import { getRandomKey } from '../utils/getRandomKey';
+import { Header } from '../components/Header';
+import styles from '../styles/GotGame.module.css';
+import { getLegibleKey } from '../utils/getLegibleKey';
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+const GotGame = () => {
+    const [isCheatMode, setIsCheatMode] = useState(false);
+    const [localHighScore, setLocalHighScore] = useState<number | null>(loadFromLocalStorage('highScore') || 0);
+    const [localCharacters, setLocalCharacters] = useState<Character[] | null>(loadFromLocalStorage('characters'));
+    const [gameCharacters, setGameCharacters] = useState<Character[] | null>(null);
+    const [winner, setWinner] = useState<Character | null>(null);
+    const [question, setQuestion] = useState<string | null>(null);
+    const [wins, setWins] = useState(0);
+    const [isLoss, setIsLoss] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    const prevWinsRef = useRef<number>(wins); // Initialize with the current wins value
+
+    const memoizedGetRandomKey = useCallback((getRandomKey), []);
+
+    const fetchData = async () => {
+        setIsLoading(true);
+
+        try {
+            const response = await fetch('/api');
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const result = await response.json();
+
+            saveToLocalStorage('characters', result);
+            setLocalCharacters(result);
+        } catch (error) {
+            setError(error as Error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const launchRound = useCallback(() => {
+        if (localCharacters && localCharacters.length >= 4) {
+            const shuffledCharacters = shuffleArray(localCharacters);
+            const selectedCharacters = shuffledCharacters?.slice(0, 4);
+            const randomKey = memoizedGetRandomKey(localCharacters[0]);
+            const legibleKey = getLegibleKey(randomKey);
+            const winner = selectedCharacters?.find((char: Character) => char[randomKey] !== undefined && char[randomKey] !== null);
+            const question = winner?.[randomKey]?.length > 0
+                ? `Which character has a ${legibleKey} of ${winner?.[randomKey]}?`
+                : `Which character has no ${legibleKey}?`;
+
+            const shuffledSelectedCharacters = shuffleArray(selectedCharacters);
+
+            setGameCharacters(shuffledSelectedCharacters);
+            setWinner(winner || null);
+            setQuestion(question);
+        } else {
+            setError(new Error('Not enough characters to start the game.'));
+        }
+
+        setIsLoading(false);
+    }, [localCharacters, memoizedGetRandomKey]);
+
+    const resetGame = useCallback(() => {
+        setIsLoss(false);
+        setGameCharacters(null);
+        setWinner(null);
+        setQuestion(null);
+        setWins(0);
+
+        launchRound();
+    }, [launchRound]);
+
+    useEffect(() => {
+        if (localCharacters === null) {
+            fetchData();
+        } else {
+            setIsLoading(false);
+        }
+    }, [localCharacters]);
+
+    useEffect(() => {
+        if (isCheatMode && winner) {
+            console.log(winner);
+        }
+    }, [isCheatMode, winner]);
+
+    useEffect(() => {
+        if (prevWinsRef.current !== wins) {
+            launchRound();
+        }
+        prevWinsRef.current = wins;
+    }, [wins, launchRound]);
+
+    useEffect(() => {
+        if (isLoss) {
+            const isNewHighScore = wins > (localHighScore || 0);
+            const scoreToSet = isNewHighScore ? wins : localHighScore;
+
+            if (isNewHighScore) {
+                alert(`New high score: ${scoreToSet}`);
+            }
+            setLocalHighScore(scoreToSet);
+            saveToLocalStorage('highScore', scoreToSet);
+        }
+    }, [isLoss, wins, localHighScore]);
+
+    if (error) return <div>Error: {error.message}</div>;
+
+    return (
+        <div className={styles.container}>
+            <Header />
+            {isLoading ? (
+                <div className={styles.loader}>Loading...</div>
+            ) : (
+                <>
+                    {!gameCharacters ? (
+                        <div className={styles.startContainer}>
+                            <button className={styles.button} onClick={launchRound}>Start</button>
+                            <div className={styles.cheatModeContainer}>
+                                <input
+                                    className={styles.cheatMode}
+                                    id="cheatMode"
+                                    name="cheatMode"
+                                    aria-label="Cheat Mode"
+                                    aria-describedby="cheatMode"
+                                    aria-checked={isCheatMode}
+                                    aria-invalid={isCheatMode ? 'true' : 'false'}
+                                    aria-required="false"
+                                    aria-labelledby="cheatMode"
+                                    aria-live="polite"
+                                    type="checkbox"
+                                    checked={isCheatMode}
+                                    onChange={() => setIsCheatMode(!isCheatMode)}
+                                />
+                                <label className={styles.cheatModeLabel} htmlFor="cheatMode">Cheat Mode</label>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className={styles.scoreContainer}>
+                            <div className={styles.wins}>
+                                <span className={styles.scoreKey}>Wins</span>
+                                <span className={styles.scoreValue}>{wins}</span>
+                            </div>
+                            <div className={styles.high}>
+                                <span className={styles.scoreKey}>High</span>
+                                <span className={styles.scoreValue}>{localHighScore}</span>
+                            </div>
+                        </div>
+                    )}
+                    {isLoss && (
+                        <>
+                            <div className={styles.lostContainer}>
+                                <h5 className={styles.lostText}>You lost!</h5>
+                            </div>
+                            <div className={styles.buttonContainer}>
+                                <button className={styles.button} onClick={resetGame}>Play again</button>
+                            </div>
+                        </>
+                    )}
+                    {gameCharacters && !isLoss && (
+                        <>
+                            {question && (
+                                <div className={styles.question}>
+                                    <h5 className="text-3xl font-bold">{question}</h5>
+                                </div>
+                            )}
+                            {gameCharacters && (
+                                <div className={styles.grid}>
+                                    {gameCharacters.map(character => (
+                                        <div key={character.id} className={styles.card}>
+                                            <div className={styles.imageContainer} onClick={() => character === winner ? setWins(wins + 1) : setIsLoss(true)}>
+                                                <Image
+                                                    priority
+                                                    src={character.imageUrl}
+                                                    blurDataURL={character.imageUrl}
+                                                    alt={`image_${character.id}`}
+                                                    className={styles.image}
+                                                    width={268}
+                                                    height={268}
+                                                />
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </>
+                    )}
+                </>
+            )}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
-}
+    );
+};
+
+export default GotGame;
