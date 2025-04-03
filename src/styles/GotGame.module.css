@@ -131,11 +131,10 @@
     }
 }
 
-.win,
+.wins,
 .high {
-    /* display: flex; */
-    flex: 0;
-    text-align: left;
+    display: flex;
+    align-items: center;
 }
 
 .scoreKey {
@@ -143,10 +142,11 @@
 }
 
 .scoreValue {
-    width: 50px;
+    width: 40px;
     font-weight: bold;
     border-radius: 3px;
-    padding: 5px;
+    padding: 0 5px;
+    border: inset 3px #999;
 }
 
 @media (prefers-color-scheme: dark) {
