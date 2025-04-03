@@ -97,6 +97,7 @@ const GotGame = () => {
         if (prevWinsRef.current !== wins) {
             launchRound();
         }
+
         prevWinsRef.current = wins;
     }, [wins, launchRound]);
 
@@ -146,7 +147,7 @@ const GotGame = () => {
                     ) : (
                         <Header
                             localHighScore={localHighScore}
-                            wins={localHighScore}
+                            wins={wins}
                         />
                     )}
                     {isLoss && (
