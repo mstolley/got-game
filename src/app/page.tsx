@@ -7,7 +7,6 @@ import { loadFromLocalStorage, saveToLocalStorage } from '../utils/localStorage'
 import { shuffleArray } from '../utils/shuffleArray';
 import { getRandomKey } from '../utils/getRandomKey';
 import { Header } from '../components/Header';
-import styles from '../styles/GotGame.module.css';
 import { getLegibleKey } from '../utils/getLegibleKey';
 
 const GotGame = () => {
@@ -126,17 +125,17 @@ const GotGame = () => {
     if (error) return <div>Error: {error.message}</div>;
 
     return (
-        <div className={styles.container}>
+        <div className="text-center m-5">
             {isLoading ? (
-                <div className={styles.loader}>Loading...</div>
+                <div className="flex justify-center items-center h-[calc(100vh-40px)] w-[calc(100vw-40px)]">Loading...</div>
             ) : (
                 <>
                     {!gameCharacters ? (
-                        <div className={styles.startContainer}>
-                            <button className={styles.button} onClick={launchRound}>Start</button>
-                            <div className={styles.cheatModeContainer}>
+                        <div className="flex mb-5 justify-center gap-5">
+                            <button className="py-2.5 px-5 bg-gray-600 border-0 rounded-md cursor-pointer transition-colors hover:bg-gray-700" onClick={launchRound}>Start</button>
+                            <div className="flex justify-center items-center h-full p-2.5 gap-2.5 border border-gray-200 rounded-md">
                                 <input
-                                    className={styles.cheatMode}
+                                    className="hover:cursor-pointer"
                                     id="cheatMode"
                                     name="cheatMode"
                                     aria-label="Cheat Mode"
@@ -150,7 +149,7 @@ const GotGame = () => {
                                     checked={isCheatMode}
                                     onChange={() => setIsCheatMode(!isCheatMode)}
                                 />
-                                <label className={styles.cheatModeLabel} htmlFor="cheatMode">Cheat Mode</label>
+                                <label className="hover:cursor-pointer" htmlFor="cheatMode">Cheat Mode</label>
                             </div>
                         </div>
                     ) : (
@@ -162,39 +161,37 @@ const GotGame = () => {
                     {isLoss && (
                         <>
                             {isEnd ? (
-                                <div className={styles.lostContainer}>
+                                <div className="mt-10 mb-10">
                                     <h5 className="text-2xl">You reached the end of your quest!</h5>
                                 </div>
 
                             ) : (
-                                <div className={styles.lostContainer}>
-                                    <h5 className={styles.lostText}>You lost!</h5>
+                                <div className="mt-10 mb-10">
+                                    <h5 className="text-red-500 text-2xl">You lost!</h5>
                                 </div>
                             )}
 
-                            <div className={styles.buttonContainer}>
-                                <button className={styles.button} onClick={resetGame}>Play Again</button>
-                            </div>
+                            <button className="py-2.5 px-5 bg-gray-600 border-0 rounded-md cursor-pointer transition-colors hover:bg-gray-700" onClick={resetGame}>Play Again</button>
                         </>
                     )}
                     {gameCharacters && !isLoss && !isEnd && (
                         <>
                             {question && (
-                                <div className={styles.question}>
-                                    <h5 className="text-2xl font-bold">{question}</h5>
+                                <div className="mb-5">
+                                    <h5 className="text-lg">{question}</h5>
                                 </div>
                             )}
                             {gameCharacters && (
-                                <div className={styles.grid}>
+                                <div className="flex gap-5 justify-center flex-wrap">
                                     {gameCharacters.map(character => (
-                                        <div key={character.id} className={styles.card}>
-                                            <div className={styles.imageContainer} onClick={() => character === winner ? setWins([...(wins || []), character]) : setIsLoss(true)}>
+                                        <div key={character.id} className="w-3xs p-2.5 text-left bg-gray-300 rounded-lg hover:cursor-pointer shadow-md hover:shadow-md transition-shadow duration-300">
+                                            <div className="relative w-full h-0 pb-[100%]" onClick={() => character === winner ? setWins([...(wins || []), character]) : setIsLoss(true)}>
                                                 <Image
+                                                    className="absolute top-0 left-0 w-full h-full rounded-lg object-cover"
                                                     priority
                                                     src={character.imageUrl}
                                                     blurDataURL={character.imageUrl}
                                                     alt={`image_${character.id}`}
-                                                    className={styles.image}
                                                     width={268}
                                                     height={268}
                                                 />

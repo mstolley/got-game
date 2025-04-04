@@ -7,16 +7,16 @@ interface HeaderProps {
 
 const Header = ({ localHighScore, wins }: HeaderProps) => {
     return (
-        <header className={styles.header}>
-            <div className={styles.scoreContainer}>
-                <div className={styles.wins}>
-                    <span className={styles.scoreKey}>Wins</span>
-                    <span className={styles.scoreValue}>{wins}</span>
+        <header className="mb-10">
+            <div className="flex justify-between items-center p-2.5 bg-gray-500 rounded-lg">
+                <div className="flex items-center">
+                    <span className="mr-2.5">Wins</span>
+                    <span className="w-10 font-bold rounded-sm py-0 px-1.25 text-green-700 bg-gray-200">{wins}</span>
                 </div>
                 <h1 className="text-3xl font-bold">GotGame</h1>
-                <div className={styles.high}>
-                    <span className={styles.scoreKey}>High</span>
-                    <span className={styles.scoreValue}>{localHighScore}</span>
+                <div className="flex items-center">
+                    <span className="mr-2.5">High</span>
+                    <span className="w-10 font-bold rounded-sm py-0 px-1.25 text-blue-700 bg-gray-200">{localHighScore}</span>
                 </div>
             </div>
         </header>

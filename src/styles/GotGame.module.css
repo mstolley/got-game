@@ -1,3 +1,4 @@
+/* fix */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -8,144 +9,32 @@
     }
 }
 
+/* fix */
 .loader {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: calc(100vh - 40px);
-    width: calc(100vw - 40px);
     opacity: 1;
     animation: fadeIn .25s forwards;
 }
 
-.container {
-    padding: 20px;
-    text-align: center;
-}
-
-.grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-}
-
-.header {
-    margin-bottom: 40px;
-}
-
+/* fix */
 .card {
-    width: 240px;
-    padding: 10px;
-    text-align: left;
-    background-color: #ededed !important;
     opacity: 0;
     animation: fadeIn .25s forwards;
-    border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, .3);
 }
 
-.imageContainer {
-    position: relative;
-    width: 100%;
-    height: 0;
-    padding-bottom: 100%;
-}
-
-.image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 10px;
-}
-
-.gameDetails {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-}
-
-.gameDetails,
-.question,
-.startContainer {
-    margin-bottom: 20px;
-}
-
-.startContainer {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-.cheatModeContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    padding: 10px;
-    gap: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.cheatMode:hover,
-.cheatModeLabel:hover {
-    cursor: pointer;
-}
-
 .button {
-    padding: 10px 20px;
-    background-color: #666;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
     transition: background-color .3s;
 }
 
-.button:hover {
-    background-color: #777;
-}
-
-.question {
-    font-size: 18px;
-    font-weight: normal;
-}
-
-.scoreContainer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-radius: 20px;
-    background-color: #ccc;
-}
-
+/* Fix */
 @media (prefers-color-scheme: dark) {
     .scoreContainer {
         background-color: #666;
     }
 }
 
-.wins,
-.high {
-    display: flex;
-    align-items: center;
-}
-
-.scoreKey {
-    margin-right: 10px;
-}
-
+/* Fix */
 .scoreValue {
-    width: 40px;
-    font-weight: bold;
-    border-radius: 3px;
-    padding: 0 5px;
     border: inset 3px #999;
 }
 
@@ -153,21 +42,4 @@
     .scoreValue {
         background-color: #ededed;
     }
-}
-
-.wins .scoreValue {
-    color: green;
-}
-
-.high .scoreValue {
-    color: blue;
-}
-
-.lostContainer {
-    margin-top: 40px;
-    margin-bottom: 40px;
-}
-
-.lostText {
-    color: red;
 }
