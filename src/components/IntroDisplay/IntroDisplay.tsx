@@ -5,7 +5,7 @@ interface IntroDisplayProps {
     launchRound: () => void;
 }
 
-const IntroDisplay = ({ isCheatMode, setIsCheatMode, launchRound }: IntroDisplayProps) => {
+function IntroDisplay({ isCheatMode, setIsCheatMode, launchRound }: IntroDisplayProps) {
     return (
         <div className="flex mt-22 mb-5 justify-center gap-5">
             <Button text="Start" onClick={launchRound} />

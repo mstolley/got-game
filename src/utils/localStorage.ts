@@ -1,10 +1,12 @@
-export const saveToLocalStorage = (key: string, value: unknown) => {
+export async function saveToLocalStorage(key: string, value: unknown) {
     if (typeof window !== 'undefined') {
         localStorage.setItem(key, JSON.stringify(value));
     }
+
+    return null;
 };
 
-export const loadFromLocalStorage = (key: string) => {
+export async function loadFromLocalStorage(key: string) {
     if (typeof window !== 'undefined') {
         const storedValue = localStorage.getItem(key);
 

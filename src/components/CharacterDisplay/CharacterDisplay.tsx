@@ -6,7 +6,7 @@ interface CharacterDisplayProps {
     onClick: (character: Character) => void;
 }
 
-const CharacterDisplay = ({ gameCharacters, onClick }: CharacterDisplayProps) => {
+function CharacterDisplay({ gameCharacters, onClick }: CharacterDisplayProps) {
     return (
         <div className="flex gap-5 justify-center flex-wrap mt-24 md:mt-5">
             {gameCharacters.map(character => (

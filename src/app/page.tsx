@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Character } from '@/interfaces/Character';
@@ -15,10 +15,10 @@ import { Loader } from '@/components/Loader';
 import { LossDisplay } from '@/components/LossDisplay';
 import { QuestionDisplay } from '@/components/QuestionDisplay';
 
-const GotGame = () => {
+function GotGame() {
     const [isCheatMode, setIsCheatMode] = useState<boolean>(false);
-    const [localHighScore, setLocalHighScore] = useState<number>(loadFromLocalStorage('highScore') || 0);
-    const [localCharacters, setLocalCharacters] = useState<Character[] | null>(loadFromLocalStorage('characters'));
+    const [localHighScore, setLocalHighScore] = useState<number>(0);
+    const [localCharacters, setLocalCharacters] = useState<Character[] | null>(null);
     const [gameCharacters, setGameCharacters] = useState<Character[] | null>(null);
     const [winner, setWinner] = useState<Character | null>(null);
     const [question, setQuestion] = useState<string>('');
@@ -66,18 +66,17 @@ const GotGame = () => {
         }
     }, [winner]);
 
-    const launchRound = useCallback(() => {
+    const launchRound = useCallback(async () => {
         if (localCharacters && localCharacters.length >= 4) {
             const cleanCharacters = localCharacters.filter(character => !wins?.includes(character));
             const shuffledCharacters = shuffleArray(cleanCharacters);
             const selectedCharacters = shuffledCharacters?.slice(0, 4);
-            const randomKey = memoizedGetRandomKey(localCharacters[0]);
-            const legibleKey = getLegibleKey(randomKey);
+            const randomKey = await memoizedGetRandomKey(localCharacters[0]);
+            const legibleKey = await getLegibleKey(randomKey);
             const winner = selectedCharacters?.find((char: Character) => char[randomKey] !== undefined && char[randomKey] !== null);
             const question = winner?.[randomKey]
                 ? `Which character has a ${legibleKey} of ${winner?.[randomKey]}?`
                 : `Which character has no ${legibleKey}?`;
-
             const shuffledSelectedCharacters = shuffleArray(selectedCharacters);
 
             if (cleanCharacters) {
@@ -139,6 +138,26 @@ const GotGame = () => {
             saveToLocalStorage('highScore', scoreToSet);
         }
     }, [isLoss, winsLength, localHighScore]);
+
+    useEffect(() => {
+        const fetchHighScore = async () => {
+            const highScore = await loadFromLocalStorage('highScore');
+
+            setLocalHighScore(highScore || 0);
+        };
+
+        fetchHighScore();
+    }, []);
+
+    useEffect(() => {
+        const fetchLocalCharacters = async () => {
+            const characters = await loadFromLocalStorage('characters');
+
+            setLocalCharacters(characters);
+        };
+
+        fetchLocalCharacters();
+    }, []);
 
     if (error) return <ErrorDisplay text={error.message} />;
 

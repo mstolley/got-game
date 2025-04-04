@@ -2,7 +2,7 @@ interface ErrorDisplayProps {
     text: string;
 }
 
-const ErrorDisplay = ({ text }: ErrorDisplayProps) => {
+async function ErrorDisplay({ text }: ErrorDisplayProps) {
     return (
         <div className="">Error: {text}</div>
     );
