@@ -143,7 +143,7 @@ const GotGame = () => {
     if (error) return <ErrorDisplay text={error.message} />;
 
     return (
-        <div className="text-center m-5">
+        <div className="text-center md:m-2.5 lg:m-5">
             {isLoading ? (
                 <Loader />
             ) : (
@@ -164,13 +164,13 @@ const GotGame = () => {
                         </>
                     )}
                     {gameCharacters && !isLoss && !isEnd && (
-                        <>
+                        <div className="mb-10">
                             <QuestionDisplay text={question} />
                             <CharacterDisplay
                                 gameCharacters={gameCharacters}
                                 onClick={imageClickHandler}
                             />
-                        </>
+                        </div>
                     )}
                 </>
             )}

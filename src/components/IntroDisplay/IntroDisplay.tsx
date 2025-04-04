@@ -7,7 +7,7 @@ interface IntroDisplayProps {
 
 const IntroDisplay = ({ isCheatMode, setIsCheatMode, launchRound }: IntroDisplayProps) => {
     return (
-        <div className="flex mb-5 justify-center gap-5">
+        <div className="flex mt-22 mb-5 justify-center gap-5">
             <Button text="Start" onClick={launchRound} />
             <div className="flex justify-center items-center h-full p-2.5 gap-2.5 border border-gray-300 dark:border-gray-700 rounded-md">
                 <input

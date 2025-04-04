@@ -5,7 +5,7 @@ interface HeaderProps {
 
 const Header = ({ localHighScore, wins }: HeaderProps) => {
     return (
-        <header className="mb-10">
+        <header className="fixed top-0 left-0 w-full z-20 h-14 opacity-80">
             <div className="flex justify-between items-center p-2.5 bg-gray-300 dark:bg-gray-800 rounded-lg">
                 <div className="flex items-center">
                     <span className="mr-2.5">Wins</span>
