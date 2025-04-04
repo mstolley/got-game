@@ -14,7 +14,6 @@
     align-items: center;
     height: calc(100vh - 40px);
     width: calc(100vw - 40px);
-    background-color: #666;
     opacity: 1;
     animation: fadeIn .25s forwards;
 }
@@ -29,6 +28,10 @@
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
+}
+
+.header {
+    margin-bottom: 40px;
 }
 
 .card {
@@ -67,7 +70,6 @@
 }
 
 .gameDetails,
-.header,
 .question,
 .startContainer {
     margin-bottom: 20px;
