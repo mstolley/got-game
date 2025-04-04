@@ -1,13 +1,16 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
 import { Character } from '../interfaces/Character';
 import { loadFromLocalStorage, saveToLocalStorage } from '../utils/localStorage';
 import { shuffleArray } from '../utils/shuffleArray';
 import { getRandomKey } from '../utils/getRandomKey';
-import { Header } from '../components/Header';
+import { Header } from '@/components/Header';
+import { CharacterDisplay } from '@/components/CharacterDisplay';
 import { getLegibleKey } from '../utils/getLegibleKey';
+import { QuestionDisplay } from '@/components/QuestionDisplay';
+import { Loader } from '@/components/Loader';
+import { IntroDisplay } from '@/components/IntroDisplay';
 
 const GotGame = () => {
     const [isCheatMode, setIsCheatMode] = useState(false);
@@ -47,6 +50,18 @@ const GotGame = () => {
             setIsLoading(false);
         }
     };
+
+    const imageClickHandler = useCallback((character: Character) => {
+        if (winner) {
+            const isWinner = character.id === winner.id;
+
+            if (isWinner) {
+                setWins((prevWins) => [...(prevWins || []), character]);
+            } else {
+                setIsLoss(true);
+            }
+        }
+    }, [winner]);
 
     const launchRound = useCallback(() => {
         if (localCharacters && localCharacters.length >= 4) {
@@ -127,31 +142,14 @@ const GotGame = () => {
     return (
         <div className="text-center m-5">
             {isLoading ? (
-                <div className="flex justify-center items-center h-[calc(100vh-40px)] w-[calc(100vw-40px)]">Loading...</div>
+                <Loader />
             ) : (
                 <>
                     {!gameCharacters ? (
-                        <div className="flex mb-5 justify-center gap-5">
-                            <button className="py-2.5 px-5 bg-gray-600 border-0 rounded-md cursor-pointer transition-colors hover:bg-gray-700" onClick={launchRound}>Start</button>
-                            <div className="flex justify-center items-center h-full p-2.5 gap-2.5 border border-gray-200 rounded-md">
-                                <input
-                                    className="hover:cursor-pointer"
-                                    id="cheatMode"
-                                    name="cheatMode"
-                                    aria-label="Cheat Mode"
-                                    aria-describedby="cheatMode"
-                                    aria-checked={isCheatMode}
-                                    aria-invalid={isCheatMode ? 'true' : 'false'}
-                                    aria-required="false"
-                                    aria-labelledby="cheatMode"
-                                    aria-live="polite"
-                                    type="checkbox"
-                                    checked={isCheatMode}
-                                    onChange={() => setIsCheatMode(!isCheatMode)}
-                                />
-                                <label className="hover:cursor-pointer" htmlFor="cheatMode">Cheat Mode</label>
-                            </div>
-                        </div>
+                        <IntroDisplay
+                            isCheatMode={isCheatMode}
+                            setIsCheatMode={setIsCheatMode}
+                        />
                     ) : (
                         <Header
                             localHighScore={localHighScore}
@@ -164,42 +162,25 @@ const GotGame = () => {
                                 <div className="mt-10 mb-10">
                                     <h5 className="text-2xl">You reached the end of your quest!</h5>
                                 </div>
-
                             ) : (
                                 <div className="mt-10 mb-10">
                                     <h5 className="text-red-500 text-2xl">You lost!</h5>
                                 </div>
                             )}
-
-                            <button className="py-2.5 px-5 bg-gray-600 border-0 rounded-md cursor-pointer transition-colors hover:bg-gray-700" onClick={resetGame}>Play Again</button>
+                            <button className="py-2.5 px-5 bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 border-0 rounded-md cursor-pointer transition delay-75 duration-200 ease-in-out" onClick={resetGame}>Play Again</button>
                         </>
                     )}
                     {gameCharacters && !isLoss && !isEnd && (
                         <>
                             {question && (
-                                <div className="mb-5">
-                                    <h5 className="text-lg">{question}</h5>
-                                </div>
+                                <QuestionDisplay
+                                    question={question}
+                                />
                             )}
-                            {gameCharacters && (
-                                <div className="flex gap-5 justify-center flex-wrap">
-                                    {gameCharacters.map(character => (
-                                        <div key={character.id} className="w-3xs p-2.5 text-left bg-gray-300 dark:bg-gray-400 rounded-lg hover:cursor-pointer shadow-md hover:shadow-md transition-shadow duration-300">
-                                            <div className="relative w-full h-0 pb-[100%]" onClick={() => character === winner ? setWins([...(wins || []), character]) : setIsLoss(true)}>
-                                                <Image
-                                                    className="absolute top-0 left-0 w-full h-full rounded-lg object-cover"
-                                                    priority
-                                                    src={character.imageUrl}
-                                                    blurDataURL={character.imageUrl}
-                                                    alt={`image_${character.id}`}
-                                                    width={268}
-                                                    height={268}
-                                                />
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
+                            <CharacterDisplay
+                                gameCharacters={gameCharacters}
+                                imageClickHandler={imageClickHandler}
+                            />
                         </>
                     )}
                 </>
