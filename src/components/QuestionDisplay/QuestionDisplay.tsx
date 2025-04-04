@@ -1,11 +1,11 @@
 interface QuestionDisplayProps {
-    question: string;
+    text: string;
 }
 
-const QuestionDisplay = ({ question }: QuestionDisplayProps) => {
+const QuestionDisplay = ({ text }: QuestionDisplayProps) => {
     return (
         <div className="mb-5">
-            <h5 className="text-lg">{question}</h5>
+            <h5 className="text-lg">{text}</h5>
         </div>
     );
 };

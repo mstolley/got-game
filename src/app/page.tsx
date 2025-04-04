@@ -1,24 +1,27 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Character } from '../interfaces/Character';
-import { loadFromLocalStorage, saveToLocalStorage } from '../utils/localStorage';
-import { shuffleArray } from '../utils/shuffleArray';
-import { getRandomKey } from '../utils/getRandomKey';
-import { Header } from '@/components/Header';
+import { Character } from '@/interfaces/Character';
+import { loadFromLocalStorage, saveToLocalStorage } from '@/utils/localStorage';
+import { shuffleArray } from '@/utils/shuffleArray';
+import { getLegibleKey } from '@/utils/getLegibleKey';
+import { getRandomKey } from '@/utils/getRandomKey';
+import { Button } from '@/components/Button';
 import { CharacterDisplay } from '@/components/CharacterDisplay';
-import { getLegibleKey } from '../utils/getLegibleKey';
-import { QuestionDisplay } from '@/components/QuestionDisplay';
-import { Loader } from '@/components/Loader';
+import { ErrorDisplay } from '@/components/ErrorDisplay';
+import { Header } from '@/components/Header';
 import { IntroDisplay } from '@/components/IntroDisplay';
+import { Loader } from '@/components/Loader';
+import { LossDisplay } from '@/components/LossDisplay';
+import { QuestionDisplay } from '@/components/QuestionDisplay';
 
 const GotGame = () => {
-    const [isCheatMode, setIsCheatMode] = useState(false);
+    const [isCheatMode, setIsCheatMode] = useState<boolean>(false);
     const [localHighScore, setLocalHighScore] = useState<number>(loadFromLocalStorage('highScore') || 0);
     const [localCharacters, setLocalCharacters] = useState<Character[] | null>(loadFromLocalStorage('characters'));
     const [gameCharacters, setGameCharacters] = useState<Character[] | null>(null);
     const [winner, setWinner] = useState<Character | null>(null);
-    const [question, setQuestion] = useState<string | null>(null);
+    const [question, setQuestion] = useState<string>('');
     const [wins, setWins] = useState<Character[] | null>(null);
     const [isLoss, setIsLoss] = useState(false);
     const [isEnd, setIsEnd] = useState(false);
@@ -96,7 +99,7 @@ const GotGame = () => {
         setIsLoss(false);
         setGameCharacters(null);
         setWinner(null);
-        setQuestion(null);
+        setQuestion('');
         setWins(null);
 
         launchRound();
@@ -137,7 +140,7 @@ const GotGame = () => {
         }
     }, [isLoss, winsLength, localHighScore]);
 
-    if (error) return <div>Error: {error.message}</div>;
+    if (error) return <ErrorDisplay text={error.message} />;
 
     return (
         <div className="text-center m-5">
@@ -149,37 +152,23 @@ const GotGame = () => {
                         <IntroDisplay
                             isCheatMode={isCheatMode}
                             setIsCheatMode={setIsCheatMode}
+                            launchRound={launchRound}
                         />
                     ) : (
-                        <Header
-                            localHighScore={localHighScore}
-                            wins={winsLength}
-                        />
+                        <Header localHighScore={localHighScore} wins={winsLength} />
                     )}
                     {isLoss && (
                         <>
-                            {isEnd ? (
-                                <div className="mt-10 mb-10">
-                                    <h5 className="text-2xl">You reached the end of your quest!</h5>
-                                </div>
-                            ) : (
-                                <div className="mt-10 mb-10">
-                                    <h5 className="text-red-500 text-2xl">You lost!</h5>
-                                </div>
-                            )}
-                            <button className="py-2.5 px-5 bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 border-0 rounded-md cursor-pointer transition delay-75 duration-200 ease-in-out" onClick={resetGame}>Play Again</button>
+                            <LossDisplay isLoss={isLoss} />
+                            <Button text="Play again" onClick={resetGame} />
                         </>
                     )}
                     {gameCharacters && !isLoss && !isEnd && (
                         <>
-                            {question && (
-                                <QuestionDisplay
-                                    question={question}
-                                />
-                            )}
+                            <QuestionDisplay text={question} />
                             <CharacterDisplay
                                 gameCharacters={gameCharacters}
-                                imageClickHandler={imageClickHandler}
+                                onClick={imageClickHandler}
                             />
                         </>
                     )}
