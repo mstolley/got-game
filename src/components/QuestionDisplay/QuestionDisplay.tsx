@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react';
+
 interface QuestionDisplayProps {
     text: string;
 }
@@ -5,7 +7,7 @@ interface QuestionDisplayProps {
 function QuestionDisplay({ text }: QuestionDisplayProps) {
     return (
         <div
-            className={`sticky md:static w-full top-22 md:mt-22 md:mb-5 z-10 bg-background p-2.5`}
+            className="fixed flex left-0 top-14 z-10 items-end justify-center w-full bg-background p-2.5 h-20"
         >
             <h5 className="text-lg">{text}</h5>
         </div>

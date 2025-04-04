@@ -162,7 +162,7 @@ function GotGame() {
     if (error) return <ErrorDisplay text={error.message} />;
 
     return (
-        <div className="text-center md:m-2.5 lg:m-5">
+        <div className="text-center md:m-2.5 lg:m-5 overflow-hidden max-h-screen">
             {isLoading ? (
                 <Loader />
             ) : (
