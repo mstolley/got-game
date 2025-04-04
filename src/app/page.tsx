@@ -184,7 +184,7 @@ const GotGame = () => {
                             {gameCharacters && (
                                 <div className="flex gap-5 justify-center flex-wrap">
                                     {gameCharacters.map(character => (
-                                        <div key={character.id} className="w-3xs p-2.5 text-left bg-gray-300 rounded-lg hover:cursor-pointer shadow-md hover:shadow-md transition-shadow duration-300">
+                                        <div key={character.id} className="w-3xs p-2.5 text-left bg-gray-300 dark:bg-gray-400 rounded-lg hover:cursor-pointer shadow-md hover:shadow-md transition-shadow duration-300">
                                             <div className="relative w-full h-0 pb-[100%]" onClick={() => character === winner ? setWins([...(wins || []), character]) : setIsLoss(true)}>
                                                 <Image
                                                     className="absolute top-0 left-0 w-full h-full rounded-lg object-cover"
