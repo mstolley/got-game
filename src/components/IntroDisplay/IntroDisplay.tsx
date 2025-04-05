@@ -1,14 +1,17 @@
-import { Button } from '../Button';
-interface IntroDisplayProps {
-    isCheatMode: boolean;
-    setIsCheatMode: (isCheatMode: boolean) => void;
-    launchRound: () => void;
-}
+"use client";
 
-function IntroDisplay({ isCheatMode, setIsCheatMode, launchRound }: IntroDisplayProps) {
+import Link from 'next/link';
+import { useState } from 'react';
+import { Button } from '@/components/Button';
+
+function IntroDisplay() {
+    const [isCheatMode, setIsCheatMode] = useState<boolean>(false);
+
     return (
         <div className="flex mt-22 mb-5 justify-center gap-5">
-            <Button text="Start" onClick={launchRound} />
+            <Link href={`/game`}>
+                <Button text="Start Game"></Button>
+            </Link>
             <div className="flex justify-center items-center h-full p-2.5 gap-2.5 border border-gray-300 dark:border-gray-700 rounded-md">
                 <input
                     className="hover:cursor-pointer"
@@ -17,7 +20,7 @@ function IntroDisplay({ isCheatMode, setIsCheatMode, launchRound }: IntroDisplay
                     aria-label="Cheat Mode"
                     aria-describedby="cheatMode"
                     aria-checked={isCheatMode}
-                    aria-invalid={isCheatMode ? 'true' : 'false'}
+                    aria-invalid={isCheatMode}
                     aria-required="false"
                     aria-labelledby="cheatMode"
                     aria-live="polite"
@@ -29,6 +32,6 @@ function IntroDisplay({ isCheatMode, setIsCheatMode, launchRound }: IntroDisplay
             </div>
         </div>
     );
-};
+}
 
 export default IntroDisplay;
