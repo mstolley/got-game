@@ -8,11 +8,12 @@ import { getLegibleKey } from '@/utils/getLegibleKey';
 import { getRandomKey } from '@/utils/getRandomKey';
 import { Button } from '@/components/Button';
 import { CharacterDisplay } from '@/components/CharacterDisplay';
-import { ErrorDisplay } from '@/components/ErrorDisplay';
+// import { ErrorDisplay } from '@/components/ErrorDisplay';
 import { Header } from '@/components/Header';
 import { Loader } from '@/components/Loader';
 import { LossDisplay } from '@/components/LossDisplay';
 import { QuestionDisplay } from '@/components/QuestionDisplay';
+import data from '@/data/data.json';
 
 function GotGame() {
     const [localHighScore, setLocalHighScore] = useState<number>(0);
@@ -24,10 +25,10 @@ function GotGame() {
     const [isLoss, setIsLoss] = useState(false);
     const [isEnd, setIsEnd] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<Error | null>(null);
+    // const [error, setError] = useState<Error | null>(null);
     const winsLength = wins ? wins.length : 0;
-    const prevWinsRef = useRef<number>(winsLength); // Initialize with the current wins value
-    const isCheatMode = true;
+    const prevWinsRef = useRef<number>(winsLength);
+
     const memoizedGetRandomKey = useCallback((getRandomKey), []);
 
     const imageClickHandler = useCallback((character: Character) => {
@@ -47,8 +48,8 @@ function GotGame() {
             const cleanCharacters = characters.filter(character => !wins?.includes(character));
             const shuffledCharacters = shuffleArray(cleanCharacters);
             const selectedCharacters = shuffledCharacters?.slice(0, 4);
-            const randomKey = await memoizedGetRandomKey(characters[0]);
-            const legibleKey = await getLegibleKey(randomKey);
+            const randomKey = memoizedGetRandomKey(characters[0]);
+            const legibleKey = getLegibleKey(randomKey);
             const winner = selectedCharacters?.find((char: Character) => char[randomKey] !== undefined && char[randomKey] !== null);
             const question = winner?.[randomKey]
                 ? `Which character has a ${legibleKey} of ${winner?.[randomKey]}?`
@@ -64,7 +65,7 @@ function GotGame() {
                 setIsEnd(true);
             }
         } else {
-            setError(new Error('Not enough characters to start the game.'));
+            // setError(new Error('Not enough characters to start the game.'));
         }
 
         setIsLoading(false);
@@ -79,12 +80,6 @@ function GotGame() {
 
         launchRound();
     }, [launchRound]);
-
-    useEffect(() => {
-        if (isCheatMode && winner) {
-            console.log(winner);
-        }
-    }, [isCheatMode, winner]);
 
     useEffect(() => {
         if (prevWinsRef.current !== winsLength) {
@@ -108,7 +103,7 @@ function GotGame() {
     }, [isLoss, winsLength, localHighScore]);
 
     useEffect(() => {
-        const fetchHighScore = async () => {
+        async function fetchHighScore() {
             const highScore = await loadFromLocalStorage('highScore');
 
             setLocalHighScore(highScore || 0);
@@ -117,7 +112,16 @@ function GotGame() {
         fetchHighScore();
     }, []);
 
-    if (error) return <ErrorDisplay text={error.message} />;
+    useEffect(() => {
+        function loadCharacters() {
+            setCharacters(data);
+        };
+
+        loadCharacters();
+        launchRound();
+    }, [launchRound]);
+
+    // if (error) return <ErrorDisplay text={error.message} />;
 
     return (
         <div className="text-center md:m-2.5 lg:m-5 overflow-hidden max-h-screen">
@@ -125,7 +129,7 @@ function GotGame() {
                 <Loader />
             ) : (
                 <>
-                    <Header localHighScore={localHighScore} wins={winsLength} />
+                    <Header localHighScore={localHighScore} winner={winner} wins={winsLength} />
                     {isLoss && (
                         <>
                             <LossDisplay isLoss={isLoss} />

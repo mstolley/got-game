@@ -15,6 +15,7 @@ export async function GET() {
             headers: { 'Content-Type': 'application/json' },
         });
     } catch (error) {
+        console.error('Error reading JSON file:', error);
         // Handle errors (e.g., file not found, JSON parsing errors)
         return new Response(JSON.stringify({ error: 'Failed to fetch data' }), {
             status: 500,

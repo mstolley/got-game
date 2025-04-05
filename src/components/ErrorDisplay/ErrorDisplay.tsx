@@ -2,9 +2,9 @@ interface ErrorDisplayProps {
     text: string;
 }
 
-async function ErrorDisplay({ text }: ErrorDisplayProps) {
+async function ErrorDisplay({ text = 'Something happened' }: ErrorDisplayProps) {
     return (
-        <div className="">Error: {text}</div>
+        <div className="mt-5 text-center">Error: {text}</div>
     );
 };
 

@@ -1,6 +1,6 @@
 import { Character } from '../interfaces/Character';
 
-export async function getRandomKey(character: Character): Promise<string> {
+export function getRandomKey(character: Character): string {
     const keys = Object.keys(character) as (keyof Character)[];
     const filteredKeys = keys.filter(key => (
         key !== null &&
